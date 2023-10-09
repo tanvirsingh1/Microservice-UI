@@ -1,14 +1,15 @@
 // src/app.js
 
 import { Auth, getUser } from './auth';
-import { getUserFragments } from './api';
+import { getUserFragments, PostUserFragment, getFragment } from './api';
 async function init() {
   // Get our UI elements
   const userSection = document.querySelector('#user');
   const loginBtn = document.querySelector('#login');
   const logoutBtn = document.querySelector('#logout');
-
-
+  const getButton = document.querySelector("#get");
+  const postButton = document.querySelector("#post");
+  const getById = document.querySelector("#getbyid");
   // Do an authenticated request to the fragments API server and log the result
 
 
@@ -44,6 +45,67 @@ async function init() {
 
   // Disable the Login button
   loginBtn.disabled = true;
+
+getButton.onclick = async () => {
+    console.log("Getting fragments");
+    
+    // Use the checkbox status directly in the function call
+    const data = await getUserFragments(user, document.getElementById("expandCheck").checked);
+
+    console.log(data.fragments);
+
+    // Clear the previous list items
+    const fragmentsList = document.getElementById('fragments-list');
+    fragmentsList.innerHTML = "";
+
+    const ol = document.createElement('ol');
+
+    // Iterate over each fragment and add it to the ordered list
+    data.fragments.forEach((element) => {
+        const li = document.createElement('li');
+        li.textContent = JSON.stringify(element);
+        ol.appendChild(li);
+    });
+
+    // Append the ordered list to the fragmentsList container
+    fragmentsList.appendChild(ol);
+};
+
+postButton.onclick = async (event) => {
+  event.preventDefault();
+  
+  const contentType = "text/plain";
+  const content = document.getElementById('fragment-content').value;
+
+  if (contentType === "text/plain") {
+    console.log("Posting as text/plain:", content);
+    
+    const fragId = await PostUserFragment(user, contentType, content); // Single call
+    
+    document.getElementById('fragment-content').value = "";
+    alert(`Created a fragment ${fragId} at ${new Date().toLocaleTimeString()}`);
+  } else {
+    console.error('Unsupported content type. Only "text/plain" is allowed.');
+  }
+};
+
+
+getById.onclick = async () => {
+  const value = document.getElementById('fragment-id').value;
+  const res = await getFragment(user, value);
+  console.log("Res is ", res);
+
+  const fragmentsList = document.getElementById('retrieved-fragment-content');
+
+  if (res.startsWith('HTTP Error') || res === 'Unsupported Media type, Only (text/plain) is supported[use .txt]' || res == 'Fragment not Found') {
+      // Highlighting the error messages
+      fragmentsList.innerHTML = `<span style="color:red;">${res}</span>`;
+  } else {
+      fragmentsList.innerHTML = "Data of Fragment is: ";
+      fragmentsList.innerHTML += JSON.stringify(res);
+  }
+};
+
 }
 
 // Wait for the DOM to be ready, then start the app
