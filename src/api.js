@@ -11,6 +11,7 @@ const apiUrl = process.env.API_URL || 'http://localhost:8080';
 export async function getUserFragments(user,expand= false) {
    
   console.log('Requesting user fragments data...');
+  console.log('Url is', apiUrl)
   let url = `${apiUrl}/v1/fragments`;
   if (expand) {
     url += '?expand=1';
@@ -74,10 +75,19 @@ export async function getFragment(user, id) {
     // Check for Successful Response
     if (res.status === 200) {
       const headers = res.headers.get("content-type");
-      if (headers && headers.includes("text/plain")) {
-        return await res.text();
+      if (headers) {
+        if (headers.includes("text/plain")) {
+          return await res.text();
+        } else if (headers.includes("text/markdown")) {
+          return await res.text(); // Assuming markdown is returned as plain text
+        } else if (headers.includes("text/html")) {
+          return await res.text(); // HTML can be handled as text as well
+        } else if (headers.includes("application/json")) {
+          return await res.json(); // For JSON, use the .json() method
+        }
       }
     }
+    
     
     // Handle other non-successful responses
     try {
@@ -91,5 +101,31 @@ export async function getFragment(user, id) {
   } catch (err) {
     console.error("Unable to call GET /v1/fragment", { err });
     throw err; // Propagate the error to the calling function
+  }
+}
+export async function getFragmentMetadata(user, id) {
+  console.log("Requesting user fragments data...");
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/${id}/info`, {
+      headers: user.authorizationHeaders(),
+    });
+
+ 
+  if(res.status==200)
+  {
+    return res.json()
+  }
+    try {
+      const error = await res.json();
+      console.log(`Error is ${error.message}`);
+      return error.message;
+    } catch (jsonError) {
+      throw new Error(`HTTP Error: ${res.status} ${res.statusText}`);
+    }
+
+  }catch(err)
+  {
+    console.error("Unable to call GET /v1/fragment", { err });
+    throw err; // Propag
   }
 }

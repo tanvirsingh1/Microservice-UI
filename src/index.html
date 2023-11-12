@@ -34,9 +34,20 @@
                 <h3>Post a New Fragment</h3>
                 <label for="fragment-content">Fragment Content:</label>
                 <textarea id="fragment-content" placeholder="Enter fragment content" required></textarea>
-                <button id="post"  type="button">Post Fragment(Text/plain)</button>
+                
+                <!-- Dropdown for MIME type selection -->
+                <label for="mimetype-select">Choose MIME Type:</label>
+                <select id="mimetype-select" name="mimetype">
+                    <option value="text/plain">Text/Plain</option>
+                    <option value="text/markdown">Text/Markdown</option>
+                    <option value="text/html">Text/HTML</option>
+                    <option value="application/json">Application/JSON</option>
+                </select>
+        
+                <button id="post" type="button">Post Fragment</button>
             </section>
         </div>
+        
         <div class="container">
             <!-- GET all fragments for the user -->
             <section id="get-fragments">
@@ -60,19 +71,20 @@
             </section>
         </div>
         
-        
         <div class="container">
             <!-- GET a specific fragment by ID -->
             <section id="get-fragment-by-id">
                 <h3>Retrieve Fragment by ID</h3>
                 <label for="fragment-id">Fragment ID:</label>
                 <input type="text" id="fragment-id" placeholder="Enter fragment ID" required />
-                <button id="getbyid">Retrieve Fragment</button>
+                <button id="getbyid">Get By ID</button>
+                <button id="getbyid-info">Get By Info</button> <!-- New button for getting fragment info -->
                 <div id="retrieved-fragment-content">
                     <!-- Retrieved fragment content will be displayed here -->
                 </div>
             </section>
         </div>
+        
     </section>
 </body>
 

@@ -1,7 +1,7 @@
 // src/app.js
 
 import { Auth, getUser } from './auth';
-import { getUserFragments, PostUserFragment, getFragment } from './api';
+import { getUserFragments, PostUserFragment, getFragment, getFragmentMetadata} from './api';
 async function init() {
   // Get our UI elements
   const userSection = document.querySelector('#user');
@@ -10,10 +10,11 @@ async function init() {
   const getButton = document.querySelector("#get");
   const postButton = document.querySelector("#post");
   const getById = document.querySelector("#getbyid");
+  const getByInfo = document.querySelector("#getbyid-info")
   // Do an authenticated request to the fragments API server and log the result
+  
 
-
-  // Wire up event handlers to deal with login and logout.
+  // Wire u p event handlers to deal with login and logout.
   loginBtn.onclick = () => {
     // Sign-in via the Amazon Cognito Hosted UI (requires redirects), see:
     // https://docs.amplify.aws/lib/auth/advanced/q/platform/js/#identity-pool-federation
@@ -74,18 +75,25 @@ getButton.onclick = async () => {
 postButton.onclick = async (event) => {
   event.preventDefault();
   
-  const contentType = "text/plain";
+  var contentType = document.getElementById('mimetype-select').value;
   const content = document.getElementById('fragment-content').value;
 
-  if (contentType === "text/plain") {
-    console.log("Posting as text/plain:", content);
+  // Check if the selected content type is one of the supported types
+  if (["text/plain", "text/markdown", "text/html", "application/json"].includes(contentType)) {
+    console.log(`Posting as ${contentType}:`, content);
     
-    const fragId = await PostUserFragment(user, contentType, content); // Single call
-    
-    document.getElementById('fragment-content').value = "";
-    alert(`Created a fragment ${fragId} at ${new Date().toLocaleTimeString()}`);
+    try {
+      const fragId = await PostUserFragment(user, contentType, content); // Single call to a function that posts the data
+      
+      document.getElementById('fragment-content').value = ""; // Clear the textarea after posting
+      alert(`Created a fragment with ID: ${fragId} at ${new Date().toLocaleTimeString()}`);
+    } catch (error) {
+      console.error('An error occurred while posting the fragment:', error);
+      alert('Failed to create the fragment.');
+    }
   } else {
-    console.error('Unsupported content type. Only "text/plain" is allowed.');
+    console.error('Unsupported content type. Only "text/plain", "text/markdown", "text/html", and "application/json" are allowed.');
+    alert(`Unsupported content type. Please select a valid content type.`);
   }
 };
 
@@ -97,15 +105,30 @@ getById.onclick = async () => {
 
   const fragmentsList = document.getElementById('retrieved-fragment-content');
 
-  if (res.startsWith('HTTP Error') || res === 'Unsupported Media type, Only (text/plain) is supported[use .txt]' || res == 'Fragment not Found') {
+  if ( res === 'Unsupported Media type, Only (text/plain) is supported[use .txt]' || res == 'Fragment not Found') {
       // Highlighting the error messages
       fragmentsList.innerHTML = `<span style="color:red;">${res}</span>`;
   } else {
       fragmentsList.innerHTML = "Data of Fragment is: ";
-      fragmentsList.innerHTML += JSON.stringify(res);
+      fragmentsList.textContent += JSON.stringify(res);
   }
 };
+getByInfo.onclick = async() => {
+  const value = document.getElementById('fragment-id').value;
+  const res = await getFragmentMetadata(user, value);
+  console.log("Res is ", JSON.stringify(res));
+  const fragmentsList = document.getElementById('retrieved-fragment-content');
+ 
+  if (  res === 'Fragment not Found') {
+    // Highlighting the error messages
+    fragmentsList.innerHTML = `<span style="color:red;">${JSON.stringify(res)}</span>`;
+}
+else{
+  fragmentsList.innerHTML = "Data of Fragment is: ";
+      fragmentsList.innerHTML += JSON.stringify(res)
+}
 
+}
 }
 
 // Wait for the DOM to be ready, then start the app
