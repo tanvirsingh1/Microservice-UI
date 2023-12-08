@@ -33,8 +33,11 @@
             <section id="post-fragment">
                 <h3>Post a New Fragment</h3>
                 <label for="fragment-content">Fragment Content:</label>
-                <textarea id="fragment-content" placeholder="Enter fragment content" required></textarea>
-                
+                <textarea id="fragment-content" placeholder="Enter fragment content" ></textarea>
+
+                <label for="photo" > Upload</label>
+                <input type="file" id="photoInput" name="photoInput"> <br><br>
+
                 <!-- Dropdown for MIME type selection -->
                 <label for="mimetype-select">Choose MIME Type:</label>
                 <select id="mimetype-select" name="mimetype">
@@ -42,49 +45,97 @@
                     <option value="text/markdown">Text/Markdown</option>
                     <option value="text/html">Text/HTML</option>
                     <option value="application/json">Application/JSON</option>
+                    <option value="image/png">image/png</option>
+                    <option value="image/jpeg">image/jpeg</option>
+                    <option value="image/webp">image/webp</option>
+                    <option value="image/gif">image/gif</option>
                 </select>
-        
+
                 <button id="post" type="button">Post Fragment</button>
             </section>
         </div>
-        
+
         <div class="container">
             <!-- GET all fragments for the user -->
             <section id="get-fragments">
                 <h3>Your Fragments</h3>
-                
+
                 <!-- Container for the button and checkbox -->
                 <div style="display: flex; align-items: center;">
                     <button id="get" type="button">Fetch All Fragments</button>
-                    
+
                     <!-- Space between button and checkbox -->
                     <span style="width: 20px;"></span>
-                    
+
                     <input type="checkbox" id="expandCheck">
                     <label for="expandCheck">Expand</label>
-                </div> <!-- Close the container div here -->
-        
+                </div>
+
                 <!-- Now, this div will be on a new line -->
                 <div id="fragments-list">
                     <!-- List of user's fragments will be displayed here -->
                 </div>
             </section>
         </div>
+
+        <div class="container">
+            <!-- DELETE a fragment by ID -->
+            <section id="delete-fragment">
+                <h3>Delete Fragment</h3>
+                <label for="delete-fragment-id">Fragment ID to Delete:</label>
+                <input type="text" id="delete-fragment-id" placeholder="Enter fragment ID to delete" required />
+                <button id="delete">Delete Fragment</button>
+            </section>
+        </div>
+
+        <div class="container">
+            <!-- UPDATE a fragment by ID -->
+            <section id="update-fragment">
+                <h3>Update Fragment</h3>
+                <label for="update-fragment-id">Fragment ID to Update:</label>
+                <input type="text" id="update-fragment-id" placeholder="Enter fragment ID to update" required />
+                <label for="update-fragment-content">New Fragment Content:</label>
+                <textarea id="update-fragment-content" placeholder="Enter new fragment content" required></textarea>
         
+                <label for="photo" > Upload for update</label>
+                <input type="file" id="photoInput2" name="photoInput"> <br><br>
+
+                <!-- Dropdown for Content-Type selection -->
+                <label for="update-fragment-content-type">Choose Content-Type:</label>
+                <select id="update-fragment-content-type" name="content-type">
+                    <option value="text/plain">Text/Plain</option>
+                    <option value="text/markdown">Text/Markdown</option>
+                    <option value="text/html">Text/HTML</option>
+                    <option value="application/json">Application/JSON</option>
+                    <option value="image/png">image/png</option>
+                    <option value="image/jpeg">image/jpeg</option>
+                    <option value="image/webp">image/webp</option>
+                    <option value="image/gif">image/gif</option>
+                    <!-- Add more options as needed -->
+                </select>
+        
+                <button id="update">Update Fragment</button>
+            </section>
+        </div>
+        
+
         <div class="container">
             <!-- GET a specific fragment by ID -->
             <section id="get-fragment-by-id">
                 <h3>Retrieve Fragment by ID</h3>
                 <label for="fragment-id">Fragment ID:</label>
                 <input type="text" id="fragment-id" placeholder="Enter fragment ID" required />
+
+
                 <button id="getbyid">Get By ID</button>
                 <button id="getbyid-info">Get By Info</button> <!-- New button for getting fragment info -->
                 <div id="retrieved-fragment-content">
                     <!-- Retrieved fragment content will be displayed here -->
                 </div>
+              <img id="image">
             </section>
         </div>
-        
+
     </section>
 </body>
 
